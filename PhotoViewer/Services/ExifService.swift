@@ -206,7 +206,7 @@ enum ExifService {
 
             let length = (Int(data[offset + 2]) << 8) | Int(data[offset + 3])
             let segEnd = offset + 2 + length
-            guard segEnd <= data.count else { return nil }
+            guard length >= 2, segEnd <= data.count else { return nil }
 
             // Check if this is APP1 with matching namespace
             if marker == 0xE1 {
@@ -243,6 +243,7 @@ enum ExifService {
             }
 
             let length = (Int(data[offset + 2]) << 8) | Int(data[offset + 3])
+            guard length >= 2 else { return offset }
             offset += 2 + length
 
             // Stop after we've passed all APPn and COM segments
