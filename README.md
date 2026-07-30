@@ -27,8 +27,8 @@ flag the promising ones — before anything serious like editing.
 
 - macOS **Preview can't rate or tag photos** at all.
 - **No lightweight, free third-party tool** lets you mark photos and filter by those marks.
-- **Adobe Bridge** can do it, but it's a sprawling **paid** app built for pros — overkill
-  just to skim and trash.
+- **Adobe Bridge, Lightroom**, and the like can do it — but they're either **paid**, bloated
+  pro tools, or carry a steep learning curve. Overkill just to skim and trash.
 
 So you're stuck manually eyeballing every file, with no way to carry your picks into
 the rest of your workflow.
