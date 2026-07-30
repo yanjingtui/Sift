@@ -9,7 +9,7 @@
 <p align="center">
   <img alt="Version" src="https://img.shields.io/badge/version-0.1-00B0FF?style=flat-square">
   <img alt="License" src="https://img.shields.io/badge/license-GPLv3-4EC51F?style=flat-square">
-  <img alt="Platform" src="https://img.shields.io/badge/platform-macOS%2026%2B-000000?style=flat-square">
+  <img alt="Platform" src="https://img.shields.io/badge/platform-macOS%2014%2B-000000?style=flat-square">
   <img alt="Swift" src="https://img.shields.io/badge/Swift-5.0-FA7343?style=flat-square">
   <img alt="UI" src="https://img.shields.io/badge/UI-Liquid%20Glass-5AC8FA?style=flat-square">
 </p>
@@ -63,7 +63,7 @@ platform — Sift doesn't lock you in. Your picks survive into whatever you use 
 - **🗃️ Batch copy** — filter down, copy the selects to a destination folder.
 - **🗑️ Trash with confirmation** — reversible, with a "don't ask again" option.
 - **⌨️ Keyboard-driven** — your hands never leave the keys.
-- **🎨 macOS 26 Liquid Glass** — native, fast, gorgeous.
+- **🎨 Native macOS** — Liquid Glass on Tahoe (26), adaptive material on Sonoma (14).
 
 ---
 
@@ -86,7 +86,7 @@ platform — Sift doesn't lock you in. Your picks survive into whatever you use 
 
 ## 📦 Build from Source
 
-**Requirements:** macOS 26+ (Tahoe), Xcode 26, [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+**Requirements:** macOS 14+ (Sonoma), Xcode 26, [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
 ```bash
 git clone https://github.com/yanjingtui/Sift.git

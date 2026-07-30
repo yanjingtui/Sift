@@ -9,7 +9,7 @@
 <p align="center">
   <img alt="Version" src="https://img.shields.io/badge/version-0.1-00B0FF?style=flat-square">
   <img alt="License" src="https://img.shields.io/badge/license-GPLv3-4EC51F?style=flat-square">
-  <img alt="Platform" src="https://img.shields.io/badge/platform-macOS%2026%2B-000000?style=flat-square">
+  <img alt="Platform" src="https://img.shields.io/badge/platform-macOS%2014%2B-000000?style=flat-square">
   <img alt="Swift" src="https://img.shields.io/badge/Swift-5.0-FA7343?style=flat-square">
   <img alt="UI" src="https://img.shields.io/badge/UI-Liquid%20Glass-5AC8FA?style=flat-square">
 </p>
@@ -58,7 +58,7 @@ Sift 只做**一件事，做好它**：快速初筛。删废片、标记保留�
 - **🗃️ 批量拷贝** — 筛选后一键拷贝精选到目标文件夹。
 - **🗑️ 删至废纸篓** — 可逆操作，支持"不再提示"。
 - **⌨️ 键盘驱动** — 双手不离键盘，全程高速操作。
-- **🎨 macOS 26 Liquid Glass** — 原生、流畅、精致。
+- **🎨 原生 macOS** — Tahoe (26) 上是 Liquid Glass，Sonoma (14) 上自动降级为标准材质。
 
 ---
 
@@ -81,7 +81,7 @@ Sift 只做**一件事，做好它**：快速初筛。删废片、标记保留�
 
 ## 📦 从源码构建
 
-**环境要求：** macOS 26+ (Tahoe)、Xcode 26、[XcodeGen](https://github.com/yonaskolb/XcodeGen)。
+**环境要求：** macOS 14+ (Sonoma)、Xcode 26、[XcodeGen](https://github.com/yonaskolb/XcodeGen)。
 
 ```bash
 git clone https://github.com/yanjingtui/Sift.git
