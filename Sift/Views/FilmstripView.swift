@@ -7,7 +7,7 @@ struct FilmstripView: View {
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 4) {
+                LazyHStack(spacing: 4) {
                     ForEach(
                         Array(store.filteredPhotos.enumerated()),
                         id: \.element.id
@@ -57,10 +57,26 @@ private struct FilmstripCell: View {
                     lineWidth: 3
                 )
         )
+        .overlay(alignment: .topLeading) {
+            if let bucket = PhotoRating.from(rating: photo.rating) {
+                Image(systemName: bucket.icon)
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(.white)
+                    .padding(3)
+                    .background(Circle().fill(bucket.color))
+                    .padding(3)
+            }
+        }
         .task(id: photo.url) {
-            let img = await Task.detached(priority: .userInitiated) {
-                ThumbnailGenerator.generate(url: photo.url, maxDimension: 140)
-            }.value
+            let url = photo.url
+            if let cached = ThumbnailGenerator.cachedThumbnail(url: url) {
+                image = cached
+                return
+            }
+            let img = await withTaskGroup(of: NSImage?.self) { group in
+                group.addTask { ThumbnailGenerator.thumbnail(url: url) }
+                return await group.next() ?? nil
+            }
             if !Task.isCancelled {
                 image = img
             }

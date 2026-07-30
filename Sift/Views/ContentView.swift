@@ -6,10 +6,27 @@ struct ContentView: View {
     @Environment(PhotoStore.self) var store
 
     var body: some View {
+        @Bindable var store = store
         NavigationSplitView {
             SidebarView()
         } detail: {
             detailContent
+        }
+        .alert(
+            "Delete \(store.pendingDeleteCount) photo\(store.pendingDeleteCount == 1 ? "" : "s")?",
+            isPresented: $store.showDeleteConfirmation
+        ) {
+            Button("Delete", role: .destructive) {
+                store.confirmDelete(alwaysSkip: false)
+            }
+            Button("Always Delete", role: .destructive) {
+                store.confirmDelete(alwaysSkip: true)
+            }
+            Button("Cancel", role: .cancel) {
+                store.cancelDelete()
+            }
+        } message: {
+            Text("The selected photos will be moved to Trash.")
         }
     }
 

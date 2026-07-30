@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 
 @main
-struct PhotoViewerApp: App {
+struct SiftApp: App {
     @State private var store = PhotoStore()
 
     var body: some Scene {

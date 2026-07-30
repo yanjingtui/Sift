@@ -1,0 +1,113 @@
+<p align="center">
+  <img src="docs/banner.png" width="100%" alt="Sift"/>
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> · <a href="README.zh-CN.md">中文</a>
+</p>
+
+<p align="center">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.1-00B0FF?style=flat-square">
+  <img alt="License" src="https://img.shields.io/badge/license-GPLv3-4EC51F?style=flat-square">
+  <img alt="Platform" src="https://img.shields.io/badge/platform-macOS%2026%2B-000000?style=flat-square">
+  <img alt="Swift" src="https://img.shields.io/badge/Swift-5.0-FA7343?style=flat-square">
+  <img alt="UI" src="https://img.shields.io/badge/UI-Liquid%20Glass-5AC8FA?style=flat-square">
+</p>
+
+---
+
+<video src="docs/demo.mp4" width="100%" controls muted></video>
+
+---
+
+## 💡 痛点
+
+市面上的初筛工具都要你给照片打 **0–5 星**。于是你纠结一张照片到底该给 **3 星还是 4 星**。
+一次拍摄 800 张照片，这种纠结不断累加，最终让人崩溃。
+
+## 🎯 解法
+
+Sift 把评分压缩成 **三个档位**——仅此而已：
+
+| 评分 | 写入文件 | 含义 |
+|:----:|:--------:|-----|
+| ❤️ **棒极了** | ★★★★★ (5) | 必留 |
+| 👍 **还不错** | ★★★ (3) | 稳，可能用得上 |
+| ❓ **先留着** | ★ (1) | 以后再说 |
+
+不再选择困难。三个按键，一次决策，下一张。
+
+而且评分**直接写进文件的 XMP 元数据**——跟着照片走，Lightroom、Bridge、Windows 资源管理器、`exiftool` 都能读。不建数据库、不要附属文件、完全无锁定。
+
+---
+
+## ✨ 功能
+
+- **📁 任意浏览** — SD 卡、本地磁盘，任何位置。不导入、不建库。
+- **🎯 三档评级** — 棒极了 / 还不错 / 先留着。彻底告别星级焦虑。
+- **💾 标记跟文件走** — 写入 XMP 元数据，跨平台可读。
+- **🔍 多条件筛选** — 单击或 ⌘+点击组合档位，想看什么就看什么。
+- **🖱️ 触摸板原生** — 双指捏合放大照片和缩略图，双指拖动平移。
+- **🗃️ 批量拷贝** — 筛选后一键拷贝精选到目标文件夹。
+- **🗑️ 删至废纸篓** — 可逆操作，支持"不再提示"。
+- **⌨️ 键盘驱动** — 双手不离键盘，全程高速操作。
+- **🎨 macOS 26 Liquid Glass** — 原生、流畅、精致。
+
+---
+
+## ⌨️ 快捷键
+
+| 按键 | 功能 |
+|:----|------|
+| `⌘O` | 打开文件夹 |
+| `1` `2` `3` | 评分：先留着 / 还不错 / 棒极了 |
+| `0` | 取消评分 |
+| `←` `→` | 上一张 / 下一张 |
+| `双击` | 打开照片详情 |
+| `⌘A` | 全选 |
+| `⌘+点击` / `Shift+点击` | 多选 |
+| `拖拽` | 框选 |
+| `Delete` | 移至废纸篓 |
+| `Esc` | 返回网格 / 取消选择 |
+
+---
+
+## 📦 从源码构建
+
+**环境要求：** macOS 26+ (Tahoe)、Xcode 26、[XcodeGen](https://github.com/yonaskolb/XcodeGen)。
+
+```bash
+git clone https://github.com/yanjingtui/Sift.git
+cd Sift
+xcodegen generate
+open Sift.xcodeproj
+```
+
+在 Xcode 中按 <kbd>⌘R</kbd> 编译运行。
+
+> 预编译版本将在 v0.2 发布。当前请从源码构建——不到一分钟。
+
+---
+
+## 🗺️ 路线图
+
+- [x] 三档评级 + XMP 持久化
+- [x] 多选、多条件筛选、批量拷贝
+- [x] 触摸板缩放与平移
+- [ ] RAW 格式支持（CR3 / NEF / ARW / RAF）
+- [ ] EXIF 信息面板（光圈、快门、ISO、GPS 地图）
+- [ ] SwiftData 缩略图缓存（应对超大文件夹）
+- [ ] AI 智能擦除（端侧，LaMa CoreML）
+
+---
+
+## 🤝 贡献
+
+欢迎提交 Pull Request。重大改动请先开 Issue 讨论。
+
+---
+
+## 📄 协议
+
+Copyright © 2026 Sift contributors. 基于 **GNU General Public License v3** 开源。
+完整协议见 [LICENSE](LICENSE)。

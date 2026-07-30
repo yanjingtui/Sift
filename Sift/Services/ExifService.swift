@@ -21,9 +21,20 @@ enum ExifService {
     // MARK: - Public API
 
     static func readRating(url: URL) -> Int {
-        guard let data = try? Data(contentsOf: url) else { return 0 }
+        // XMP and EXIF IFD0 both live in APP1 segments near the file head.
+        // Reading the first 256KB avoids loading the entire image just to
+        // extract a rating.
+        guard let data = readHeader(url: url, maxBytes: 256 * 1024) else { return 0 }
         if let xmp = readXMPRating(from: data), xmp > 0 { return xmp }
         return readEXIFRating(from: data)
+    }
+
+    /// Reads up to `maxBytes` from the start of the file.
+    /// For files smaller than `maxBytes`, returns the full contents.
+    private static func readHeader(url: URL, maxBytes: Int) -> Data? {
+        guard let handle = try? FileHandle(forReadingFrom: url) else { return nil }
+        defer { try? handle.close() }
+        return try? handle.read(upToCount: maxBytes)
     }
 
     static func writeRating(url: URL, rating: Int) throws {
@@ -171,8 +182,8 @@ enum ExifService {
     /// Find the APP1 segment containing EXIF data; return the TIFF bytes.
     private static func extractTIFFData(from data: Data) -> Data? {
         guard let seg = findSegment(in: data, namespace: "Exif") else { return nil }
-        let payload = data[seg.dataRange]
-        // Exif segment starts with "Exif\0\0" (6 bytes), then TIFF data
+        // Data() wrapper resets startIndex to 0 — slices have non-zero offsets
+        let payload = Data(data[seg.dataRange])
         guard payload.count > 6 else { return nil }
         return payload.subdata(in: 6..<payload.count)
     }
@@ -180,8 +191,7 @@ enum ExifService {
     /// Find the APP1 segment containing XMP data; return its XML payload.
     private static func findXMPSegment(in data: Data) -> (SegmentRange, Data)? {
         guard let seg = findSegment(in: data, namespace: xmpNamespace) else { return nil }
-        let payload = data[seg.dataRange]
-        // Skip namespace (29 bytes), rest is XML
+        let payload = Data(data[seg.dataRange])
         guard payload.count > xmpNamespaceData.count else { return nil }
         let xml = payload.subdata(in: xmpNamespaceData.count..<payload.count)
         return (seg, xml)

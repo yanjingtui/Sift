@@ -29,7 +29,7 @@ struct SidebarView: View {
             Spacer()
 
             // Section 3: Copy (bottom, only when filter active)
-            if store.minRatingFilter > 0 {
+            if store.isFilterActive {
                 Divider()
                 copySection
                     .padding()
@@ -63,18 +63,40 @@ struct SidebarView: View {
     // MARK: - Filter
 
     private var filterSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Filter")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text("Filter")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                if store.isFilterActive {
+                    Button("Clear") { store.clearRatingFilter() }
+                        .buttonStyle(.borderless)
+                        .font(.caption)
+                }
+            }
+            .padding(.horizontal)
 
-            FilterRow(title: "All Photos", stars: "", minRating: 0)
-            FilterRow(title: "★ and above", stars: "★", minRating: 1)
-            FilterRow(title: "★★ and above", stars: "★★", minRating: 2)
-            FilterRow(title: "★★★ and above", stars: "★★★", minRating: 3)
-            FilterRow(title: "★★★★ and above", stars: "★★★★", minRating: 4)
-            FilterRow(title: "★★★★★", stars: "★★★★★", minRating: 5)
+            FilterChip(title: "All Photos", rating: nil,
+                       icon: "square.grid.2x2", color: .accentColor,
+                       count: store.photos.count)
+            FilterChip(title: "Unrated", rating: 0,
+                       icon: "circle.dashed", color: .secondary,
+                       count: store.count(forRating: 0))
+            FilterChip(title: PhotoRating.maybe.label, rating: PhotoRating.maybe.rawValue,
+                       icon: PhotoRating.maybe.icon, color: PhotoRating.maybe.color,
+                       count: store.count(forRating: PhotoRating.maybe.rawValue))
+            FilterChip(title: PhotoRating.good.label, rating: PhotoRating.good.rawValue,
+                       icon: PhotoRating.good.icon, color: PhotoRating.good.color,
+                       count: store.count(forRating: PhotoRating.good.rawValue))
+            FilterChip(title: PhotoRating.love.label, rating: PhotoRating.love.rawValue,
+                       icon: PhotoRating.love.icon, color: PhotoRating.love.color,
+                       count: store.count(forRating: PhotoRating.love.rawValue))
+
+            Text("Click to select · ⌘-click to combine")
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+                .padding(.horizontal)
         }
         .padding(.vertical, 8)
     }
@@ -114,6 +136,14 @@ struct SidebarView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+
+                Button {
+                    store.copyState = .idle
+                } label: {
+                    Label("Copy Again", systemImage: "doc.on.doc")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
             }
 
         case .failed(let message):
@@ -147,6 +177,7 @@ struct SidebarView: View {
         let panel = NSOpenPanel()
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
+        panel.canCreateDirectories = true
         panel.prompt = "Copy"
         panel.message = "Choose destination folder"
 
@@ -156,43 +187,66 @@ struct SidebarView: View {
     }
 }
 
-// MARK: - Filter Row
+// MARK: - Filter Chip
 
-private struct FilterRow: View {
+/// A single filter row in the sidebar.
+/// - Plain click: single-select this bucket (replaces current filter).
+/// - ⌘-click: toggle this bucket on/off, allowing multi-bucket filters.
+/// - `rating == nil` represents "All Photos" and always clears the filter.
+private struct FilterChip: View {
     @Environment(PhotoStore.self) var store
     let title: String
-    let stars: String
-    let minRating: Int
+    let rating: Int?      // nil = All Photos
+    var icon: String
+    var color: Color
+    let count: Int
 
-    private var count: Int {
-        store.photos.filter { $0.rating >= minRating }.count
-    }
-
-    private var isSelected: Bool {
-        store.minRatingFilter == minRating
+    private var active: Bool {
+        guard let r = rating else { return store.selectedRatings.isEmpty }
+        return store.selectedRatings.contains(r)
     }
 
     var body: some View {
         Button {
-            store.minRatingFilter = minRating
+            handleTap()
         } label: {
-            HStack {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.caption)
+                    .foregroundStyle(active ? color : .secondary)
                 Text(title)
+                    .foregroundStyle(active ? .primary : .secondary)
                 Spacer()
                 Text("\(count)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .monospacedDigit()
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 5)
-            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
             .background {
-                if isSelected {
+                if active {
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.accentColor.opacity(0.15))
+                        .fill(color.opacity(0.15))
                 }
             }
         }
         .buttonStyle(.plain)
+    }
+
+    private func handleTap() {
+        let flags = NSEvent.modifierFlags
+        guard let r = rating else {
+            // "All Photos" always resets to show everything.
+            store.clearRatingFilter()
+            return
+        }
+        if flags.contains(.command) {
+            store.toggleRatingFilter(r)
+        } else {
+            store.setRatingFilter([r])
+        }
     }
 }
