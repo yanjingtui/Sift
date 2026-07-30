@@ -22,13 +22,24 @@
 
 ## 💡 The Problem
 
-Every other culling tool wants you to rate photos **0–5 stars**. So you sit there
-debating whether a shot is a **3 or a 4**. That friction compounds across 800 photos
-from a single shoot.
+You just shot 800 photos. Now you need to **cull them** — toss the blurry duds,
+flag the promising ones — before anything serious like editing.
+
+- macOS **Preview can't rate or tag photos** at all.
+- **No lightweight, free third-party tool** lets you mark photos and filter by those marks.
+- **Adobe Bridge** can do it, but it's a sprawling **paid** app built for pros — overkill
+  just to skim and trash.
+
+So you're stuck manually eyeballing every file, with no way to carry your picks into
+the rest of your workflow.
 
 ## 🎯 The Fix
 
-Sift collapses rating to **three buckets** — and nothing more:
+Sift does **one thing well**: fast first-pass culling. Delete the duds, tag the keepers,
+move on. No library, no import, no bloat.
+
+Three buckets — not 0–5 stars — because agonizing over 3 vs 4 is exactly the friction
+that slows you down:
 
 | Rate | Saved as | For |
 |:----:|:--------:|-----|
@@ -36,11 +47,9 @@ Sift collapses rating to **three buckets** — and nothing more:
 | 👍 **Good** | ★★★ (3) | Solid, maybe usable |
 | ❓ **Maybe** | ★ (1) | Decide later |
 
-No more analysis paralysis. Three keys, one decision, next photo.
-
-And the rating is written **directly into the file's XMP metadata** — so it travels
-with the photo into Lightroom, Bridge, Windows Explorer, or `exiftool`. No database,
-no sidecar files, no lock-in.
+The rating is written **into the file's XMP metadata**, so it follows the photo anywhere.
+Sort, filter, and group by rating in **Bridge, Lightroom, Finder, or `exiftool`** on any
+platform — Sift doesn't lock you in. Your picks survive into whatever you use next.
 
 ---
 
