@@ -97,7 +97,7 @@ open Sift.xcodeproj
 
 Then build and run with <kbd>⌘R</kbd> in Xcode.
 
-> Pre-built binaries ship with v0.2. For now, build from source — it takes under a minute.
+> Download a pre-built DMG from the [latest release](https://github.com/yanjingtui/Sift/releases/latest) — drag to Applications and you're done. Or build from source.
 
 ---
 

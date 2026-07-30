@@ -92,7 +92,7 @@ open Sift.xcodeproj
 
 在 Xcode 中按 <kbd>⌘R</kbd> 编译运行。
 
-> 预编译版本将在 v0.2 发布。当前请从源码构建——不到一分钟。
+> 从 [最新发布](https://github.com/yanjingtui/Sift/releases/latest) 下载预编译 DMG——拖到「应用程序」文件夹即可。也可从源码构建。
 
 ---
 
