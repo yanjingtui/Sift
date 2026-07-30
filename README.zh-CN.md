@@ -14,6 +14,13 @@
   <img alt="UI" src="https://img.shields.io/badge/UI-Liquid%20Glass-5AC8FA?style=flat-square">
 </p>
 
+<p align="center">
+  <a href="https://github.com/yanjingtui/Sift/releases/latest">
+    <img src="https://img.shields.io/badge/下载-Sift%20v0.1-00B0FF?style=for-the-badge" alt="下载 Sift">
+  </a>
+</p>
+<p align="center"><sub>Universal DMG · Apple Silicon + Intel · macOS 14+<br>打开 → 拖到「应用程序」→ 完成</sub></p>
+
 ---
 
 <video src="docs/demo.mp4" width="100%" controls muted></video>
