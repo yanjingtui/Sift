@@ -71,6 +71,7 @@ platform — Sift doesn't lock you in. Your picks survive into whatever you use 
 - **🗑️ Trash with confirmation** — reversible, with a "don't ask again" option.
 - **⌨️ Keyboard-driven** — your hands never leave the keys.
 - **🎨 Native macOS** — Liquid Glass on Tahoe (26), adaptive material on Sonoma (14).
+- **🌍 Multilingual** — English, Simplified Chinese, French. Follows your system language.
 
 ---
 
