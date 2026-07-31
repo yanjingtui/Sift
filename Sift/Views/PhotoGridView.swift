@@ -208,7 +208,7 @@ struct PhotoGridView: View {
             Button("Unrated") { store.setRating(photo, rating: 0) }
         }
         Divider()
-        Button("Delete \(count) Photo\(count == 1 ? "" : "s")", role: .destructive) {
+        Button("Delete \(count) Photos", role: .destructive) {
             if inSelection {
                 store.requestDeleteSelected()
             } else {

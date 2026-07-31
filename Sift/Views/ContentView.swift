@@ -13,7 +13,7 @@ struct ContentView: View {
             detailContent
         }
         .alert(
-            "Delete \(store.pendingDeleteCount) photo\(store.pendingDeleteCount == 1 ? "" : "s")?",
+            "Delete \(store.pendingDeleteCount) photos?",
             isPresented: $store.showDeleteConfirmation
         ) {
             Button("Delete", role: .destructive) {

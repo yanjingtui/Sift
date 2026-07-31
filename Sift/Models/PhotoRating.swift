@@ -14,9 +14,9 @@ enum PhotoRating: Int, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .maybe: return "Maybe"
-        case .good:  return "Good"
-        case .love:  return "Love"
+        case .maybe: return String(localized: "Maybe")
+        case .good:  return String(localized: "Good")
+        case .love:  return String(localized: "Love")
         }
     }
 

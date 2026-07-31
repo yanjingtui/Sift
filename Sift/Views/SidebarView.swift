@@ -118,7 +118,7 @@ struct SidebarView: View {
         case .copying(let progress):
             VStack(spacing: 6) {
                 ProgressView(value: progress)
-                Text("Copying… \(Int(progress * 100))%")
+                Text("Copying… \(Int(progress * 100))%%")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

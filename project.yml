@@ -1,6 +1,7 @@
 name: Sift
 options:
   bundleIdPrefix: app.sift
+  developmentLanguage: en
   deploymentTarget:
     macOS: "14.0"
   createIntermediateGroups: true
@@ -27,3 +28,4 @@ targets:
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGNING_ALLOWED: NO
         ENABLE_HARDENED_RUNTIME: NO
+        KNOWN_REGIONS: "en Base zh-Hans fr"

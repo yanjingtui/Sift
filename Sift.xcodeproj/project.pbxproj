@@ -16,6 +16,7 @@
 		6354BE04535CDDC4E2C78E78 /* PhotoRating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 702046C723B93522157B54BC /* PhotoRating.swift */; };
 		65EC914D0EA425B6900594C5 /* PhotoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C60ADE26CBACD0A643E6DD37 /* PhotoItem.swift */; };
 		6FFCD9CF16EA66935B63D326 /* ThumbnailGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFBEACD2B5DD8322F2723B3 /* ThumbnailGenerator.swift */; };
+		7408F9F5D960673BA0956796 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 86D8FBC0B78EDE3EDA3AD20F /* Localizable.xcstrings */; };
 		7A3A6BC3C116D5D3E78CD52C /* FileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24EF03D85510AB2FE2AD30B4 /* FileService.swift */; };
 		8AC2E27807267D7BC22356CF /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBDBF6AC402C4CE4A2BEEBA /* PhotoDetailView.swift */; };
 		8E7053CB2647FD22D24EB13D /* ExifService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E026B5940644C2C61489E26B /* ExifService.swift */; };
@@ -32,6 +33,7 @@
 		5BFBEACD2B5DD8322F2723B3 /* ThumbnailGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailGenerator.swift; sourceTree = "<group>"; };
 		63176612A58846C61452E259 /* ThumbnailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailCell.swift; sourceTree = "<group>"; };
 		702046C723B93522157B54BC /* PhotoRating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoRating.swift; sourceTree = "<group>"; };
+		86D8FBC0B78EDE3EDA3AD20F /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		95F0B660A132EFAAE9848931 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		B6FD0AE102C9816A439DA945 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		B78573D436C76FEC07E33F99 /* RatingPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingPicker.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				08B127D3491D0E77696F1D55 /* Assets.xcassets */,
+				86D8FBC0B78EDE3EDA3AD20F /* Localizable.xcstrings */,
 				C500888A6085BCD2AF0E9972 /* SiftApp.swift */,
 				CF11070B68E460FAD7C2265E /* Models */,
 				9109BB7525CC8F7340B220F2 /* Services */,
@@ -147,6 +150,8 @@
 			knownRegions = (
 				Base,
 				en,
+				fr,
+				"zh-Hans",
 			);
 			mainGroup = D852F6552D37B1F8043D7CEB;
 			minimizedProjectReferenceProxies = 1;
@@ -166,6 +171,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E28E5E15EA77284F34B747EA /* Assets.xcassets in Resources */,
+				7408F9F5D960673BA0956796 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,6 +216,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSHumanReadableCopyright = GPLv3;
+				KNOWN_REGIONS = "en Base zh-Hans fr";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -355,6 +362,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSHumanReadableCopyright = GPLv3;
+				KNOWN_REGIONS = "en Base zh-Hans fr";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

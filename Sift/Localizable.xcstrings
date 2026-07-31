@@ -1,0 +1,277 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+
+    "Open Folder…" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开文件夹…" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir un dossier…" } }
+      }
+    },
+    "Open Folder" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开文件夹" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir un dossier" } }
+      }
+    },
+    "Open" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir" } }
+      }
+    },
+    "Choose a folder containing photos" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择一个包含照片的文件夹" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisissez un dossier contenant des photos" } }
+      }
+    },
+    "Current Folder" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "当前文件夹" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Dossier actuel" } }
+      }
+    },
+    "%lld photos · %lld marked" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%lld 张照片 · %lld 张已标记" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%lld photos · %lld marquées" } }
+      }
+    },
+    "Filter" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "筛选" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Filtrer" } }
+      }
+    },
+    "Clear" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "清除" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Effacer" } }
+      }
+    },
+    "All Photos" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "全部照片" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Toutes les photos" } }
+      }
+    },
+    "Unrated" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "未评级" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Non notées" } }
+      }
+    },
+    "Click to select · ⌘-click to combine" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "点击选择 · ⌘-点击组合" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Clic pour sélectionner · ⌘-clic pour combiner" } }
+      }
+    },
+    "Copy %lld to…" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "拷贝 %lld 张到…" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Copier %lld vers…" } }
+      }
+    },
+    "Copying… %lld%%" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "拷贝中… %lld%%" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Copie… %lld %%" } }
+      }
+    },
+    "Copied %lld photos" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已拷贝 %lld 张照片" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%lld photos copiées" } }
+      }
+    },
+    "Reveal in Finder" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "在 Finder 中显示" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Afficher dans le Finder" } }
+      }
+    },
+    "Copy Again" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "再次拷贝" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Copier à nouveau" } }
+      }
+    },
+    "Copy failed" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "拷贝失败" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Échec de la copie" } }
+      }
+    },
+    "No Photos Found" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "未找到照片" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune photo trouvée" } }
+      }
+    },
+    "This folder doesn't contain any supported image files." : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "此文件夹不包含任何受支持的图片文件。" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ce dossier ne contient aucun fichier image pris en charge." } }
+      }
+    },
+    "%lld selected" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已选 %lld 张" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%lld sélectionnée(s)" } }
+      }
+    },
+    "%lld photos" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%lld 张照片" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%lld photos" } }
+      }
+    },
+    "Adjust thumbnail size (pinch on trackpad)" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "调整缩略图大小（触摸板捏合）" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajuster la taille des vignettes (pincement sur trackpad)" } }
+      }
+    },
+    "Select All" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "全选" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Tout sélectionner" } }
+      }
+    },
+    "Delete Selected" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "删除所选" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer la sélection" } }
+      }
+    },
+    "Deselect" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "取消选择" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Désélectionner" } }
+      }
+    },
+    "Delete %lld Photos" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "Delete %lld Photo" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "Delete %lld Photos" } }
+            }
+          }
+        },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "删除 %lld 张照片" } },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer %lld photo" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer %lld photos" } }
+            }
+          }
+        }
+      }
+    },
+    "Grid" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "网格" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Grille" } }
+      }
+    },
+    "Zoom (pinch on trackpad, double-click photo to reset)" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "缩放（触摸板捏合，双击照片重置）" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Zoom (pincement sur trackpad, double-clic pour réinitialiser)" } }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "删除" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer" } }
+      }
+    },
+    "Delete %lld photos?" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "Delete %lld photo?" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "Delete %lld photos?" } }
+            }
+          }
+        },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "删除 %lld 张照片？" } },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer %lld photo ?" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer %lld photos ?" } }
+            }
+          }
+        }
+      }
+    },
+    "Always Delete" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "总是删除" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Toujours supprimer" } }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "取消" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Annuler" } }
+      }
+    },
+    "The selected photos will be moved to Trash." : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "所选照片将被移至废纸篓。" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Les photos sélectionnées seront déplacées vers la Corbeille." } }
+      }
+    },
+    "Loading photos…" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "正在加载照片…" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Chargement des photos…" } }
+      }
+    },
+    "Open a Folder to Start" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开文件夹以开始" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrez un dossier pour commencer" } }
+      }
+    },
+    "Browse your photos, rate them,\nand copy your favorites." : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "浏览照片、评分，\n并拷贝你最喜欢的。" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Parcourez vos photos, notez-les,\net copiez vos préférées." } }
+      }
+    },
+    "No photos match this filter" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "没有照片匹配此筛选条件" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune photo ne correspond à ce filtre" } }
+      }
+    },
+    "Love" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "棒极了" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Coup de cœur" } }
+      }
+    },
+    "Good" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "还不错" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Bien" } }
+      }
+    },
+    "Maybe" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "先留着" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "À voir" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

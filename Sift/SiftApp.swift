@@ -25,8 +25,8 @@ struct SiftApp: App {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
-        panel.prompt = "Open"
-        panel.message = "Choose a folder containing photos"
+        panel.prompt = String(localized: "Open")
+        panel.message = String(localized: "Choose a folder containing photos")
 
         if panel.runModal() == .OK, let url = panel.url {
             store.loadFolder(url)
