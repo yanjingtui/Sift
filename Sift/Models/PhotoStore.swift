@@ -159,21 +159,42 @@ final class PhotoStore {
 
     /// Replace the active filter with a single rating bucket.
     func setRatingFilter(_ ratings: Set<Int>) {
+        let anchor = currentPhoto?.id
         selectedRatings = ratings
+        realignSelection(to: anchor)
     }
 
     /// Toggle one bucket on/off (Cmd+click in sidebar). Toggling the last
     /// remaining bucket off returns to "show all".
     func toggleRatingFilter(_ rating: Int) {
+        let anchor = currentPhoto?.id
         if selectedRatings.contains(rating) {
             selectedRatings.remove(rating)
         } else {
             selectedRatings.insert(rating)
         }
+        realignSelection(to: anchor)
     }
 
     func clearRatingFilter() {
+        let anchor = currentPhoto?.id
         selectedRatings.removeAll()
+        realignSelection(to: anchor)
+    }
+
+    /// After the filter changes, `filteredPhotos` reorders. In detail mode we
+    /// keep the currently displayed photo anchored by its id: if it's still in
+    /// the filtered set, snap `selectedIndex` to its new position (otherwise
+    /// the detail view would either jump to an unrelated photo or go black
+    /// when the old index is out of range). If it's been filtered out, leave
+    /// detail view so the user isn't stranded.
+    private func realignSelection(to anchorID: String?) {
+        guard viewMode == .detail, let anchorID else { return }
+        if let newIdx = filteredPhotos.firstIndex(where: { $0.id == anchorID }) {
+            selectedIndex = newIdx
+        } else {
+            exitDetail()
+        }
     }
 
     /// Count of photos that match a given rating bucket (0 = unrated).
