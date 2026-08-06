@@ -75,6 +75,22 @@ platform — Sift doesn't lock you in. Your picks survive into whatever you use 
 
 ---
 
+## 📷 Supported Formats
+
+| Format | Browse | Rating storage |
+|:------:|:------:|----------------|
+| **JPEG** (`jpg` / `jpeg`) | ✅ | XMP embedded in the file (APP1 segment) |
+| **PNG** | ✅ | XMP embedded in the file (iTXt chunk) |
+| **HEIC** | ✅ | `.xmp` sidecar — original file untouched |
+| **WebP** | ✅ | `.xmp` sidecar — original file untouched |
+| RAW (CR3, NEF, ARW, RAF), TIFF, GIF, BMP, etc. | ❌ | Hidden from the browser |
+
+- **JPEG and PNG** store the rating directly inside the file — it follows the photo through copies, uploads, and renames.
+- **HEIC and WebP** store the rating in a `.xmp` sidecar next to the image. Sift carries the sidecar along when you copy or trash the photo; if you move/rename the image outside Sift, move the `.xmp` along with it.
+- **Everything else is filtered out before anything is written**, so unsupported files can never be touched. As a final safeguard, the writer checks the file's magic bytes (not just the extension) and falls back to sidecar mode for anything it doesn't recognize — misnamed files cannot corrupt data.
+
+---
+
 ## ⌨️ Keyboard
 
 | Key | Action |
