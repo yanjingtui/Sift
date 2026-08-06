@@ -39,6 +39,9 @@ enum FileService {
 
     /// Copy a list of files to `destination`. If a file with the same name
     /// already exists, `-1`, `-2`, ... is appended to the basename.
+    ///
+    /// For formats whose rating lives in a `.xmp` sidecar (HEIC, WebP), the
+    /// sidecar is copied alongside the image so the rating survives the copy.
     static func copyPhotos(
         _ urls: [URL],
         to destination: URL,
@@ -49,6 +52,17 @@ enum FileService {
                 for: destination.appendingPathComponent(url.lastPathComponent)
             )
             try FileManager.default.copyItem(at: url, to: dest)
+
+            // Carry the .xmp sidecar along if the source has one. Without this,
+            // HEIC/WebP copies would silently lose their rating.
+            let sidecar = ExifService.sidecarURL(for: url)
+            if FileManager.default.fileExists(atPath: sidecar.path) {
+                let destSidecar = uniqueDestination(
+                    for: ExifService.sidecarURL(for: dest)
+                )
+                try FileManager.default.copyItem(at: sidecar, to: destSidecar)
+            }
+
             progress(Double(i + 1) / Double(urls.count))
         }
     }

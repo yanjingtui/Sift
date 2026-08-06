@@ -335,6 +335,14 @@ final class PhotoStore {
             for url in urls {
                 var resultURL: NSURL?
                 try? FileManager.default.trashItem(at: url, resultingItemURL: &resultURL)
+
+                // Trash the .xmp sidecar too if present, so we don't leave
+                // orphan rating files behind when the image is deleted.
+                let sidecar = ExifService.sidecarURL(for: url)
+                if FileManager.default.fileExists(atPath: sidecar.path) {
+                    var sidecarResultURL: NSURL?
+                    try? FileManager.default.trashItem(at: sidecar, resultingItemURL: &sidecarResultURL)
+                }
             }
             DispatchQueue.main.async {
                 self.photos.removeAll { urlPaths.contains($0.url.path) }
