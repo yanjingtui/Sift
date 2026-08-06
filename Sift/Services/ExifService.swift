@@ -1,79 +1,119 @@
 import Foundation
 
-/// Reads and writes photo star ratings via XMP metadata embedded in JPEG files.
+/// Reads and writes photo star ratings via XMP metadata.
 ///
-/// ImageIO's CGImageDestination does not support the EXIF Rating tag (0x4746),
-/// so we write **XMP Rating** (`xmp:Rating`) as a separate APP1 segment instead.
-/// This is what exiftool, Lightroom, and Bridge use, and Windows Explorer
-/// reads it natively via the `System.Rating` shell property.
+/// Format support:
+/// - **JPEG**: XMP embedded in an APP1 segment (lossless).
+/// - **PNG**: XMP embedded in an iTXt chunk with keyword `XML:com.adobe.xmp`
+///   (lossless).
+/// - **HEIC / WebP / others**: XMP written as a sidecar `.xmp` file alongside
+///   the image, so the original file is never modified.
 ///
-/// For reading, we check XMP first, then fall back to a binary scan of the
-/// EXIF IFD0 for tag 0x4746 (files rated by older tools that wrote EXIF directly).
+/// The XMP `Rating` tag is what exiftool, Lightroom, Bridge, and Windows
+/// Explorer all read.
 enum ExifService {
 
-    // XMP namespace identifier (null-terminated, 29 bytes)
+    // XMP namespace identifier (null-terminated, 29 bytes) — used in JPEG APP1
     private static let xmpNamespace = "http://ns.adobe.com/xap/1.0/\0"
     private static let xmpNamespaceData = xmpNamespace.data(using: .ascii)!
 
-    // EXIF Rating tag ID (for fallback binary read)
+    // EXIF Rating tag ID (for JPEG EXIF fallback read)
     private static let exifRatingTag: UInt16 = 0x4746
+
+    // PNG iTXt keyword for XMP
+    private static let pngXMPKeyword = "XML:com.adobe.xmp"
 
     // MARK: - Public API
 
     static func readRating(url: URL) -> Int {
-        // XMP and EXIF IFD0 both live in APP1 segments near the file head.
-        // Reading the first 256KB avoids loading the entire image just to
-        // extract a rating.
         guard let data = readHeader(url: url, maxBytes: 256 * 1024) else { return 0 }
-        if let xmp = readXMPRating(from: data), xmp > 0 { return xmp }
-        return readEXIFRating(from: data)
+        let format = detectFormat(of: data)
+
+        switch format {
+        case .jpeg:
+            if let xmp = readJPEGXMPRating(from: data), xmp > 0 { return xmp }
+            return readEXIFRating(from: data)
+        case .png:
+            return readPNGRating(from: data)
+        case .heic, .webp, .other:
+            return readSidecarRating(url: url)
+        }
     }
 
+    static func writeRating(url: URL, rating: Int) throws {
+        guard let data = try? Data(contentsOf: url) else {
+            throw ExifError.cannotReadFile
+        }
+
+        switch detectFormat(of: data) {
+        case .jpeg:
+            let modified = try writeJPEGXMPRating(to: data, rating: rating)
+            try modified.write(to: url, options: .atomic)
+        case .png:
+            let modified = try writePNGXMPRating(to: data, rating: rating)
+            try modified.write(to: url, options: .atomic)
+        case .heic, .webp, .other:
+            try writeSidecarXMPRating(url: url, rating: rating)
+        }
+    }
+
+    // MARK: - Format Detection
+
+    enum ImageFormat {
+        case jpeg, png, heic, webp, other
+    }
+
+    /// Detect image format from the first bytes of the file.
+    static func detectFormat(of data: Data) -> ImageFormat {
+        guard data.count >= 4 else { return .other }
+        // JPEG: FF D8
+        if data[0] == 0xFF && data[1] == 0xD8 { return .jpeg }
+        // PNG: 89 50 4E 47
+        if data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47 {
+            return .png
+        }
+        // HEIF/HEIC: "ftyp" box at offset 4
+        if data.count >= 12,
+           data[4] == 0x66, data[5] == 0x74, data[6] == 0x79, data[7] == 0x70 {
+            let brands = ["heic", "heix", "hevc", "heim", "heis", "mif1", "hevs", "avci", "avcs"]
+            let brand = String(data: data.subdata(in: 8..<12), encoding: .ascii) ?? ""
+            if brands.contains(brand) { return .heic }
+        }
+        // WebP: RIFF....WEBP
+        if data.count >= 12,
+           data[0] == 0x52, data[1] == 0x49, data[2] == 0x46, data[3] == 0x46,
+           data[8] == 0x57, data[9] == 0x45, data[10] == 0x42, data[11] == 0x50 {
+            return .webp
+        }
+        return .other
+    }
+
+    // MARK: - Read helpers
+
     /// Reads up to `maxBytes` from the start of the file.
-    /// For files smaller than `maxBytes`, returns the full contents.
     private static func readHeader(url: URL, maxBytes: Int) -> Data? {
         guard let handle = try? FileHandle(forReadingFrom: url) else { return nil }
         defer { try? handle.close() }
         return try? handle.read(upToCount: maxBytes)
     }
 
-    static func writeRating(url: URL, rating: Int) throws {
-        guard let jpegData = try? Data(contentsOf: url) else {
-            throw ExifError.cannotReadFile
-        }
-        let modified = try writeXMPRating(to: jpegData, rating: rating)
-        try modified.write(to: url, options: .atomic)
-    }
-
-    // MARK: - XMP Read
+    // MARK: - JPEG XMP
 
     /// Extract `xmp:Rating` from the XMP APP1 segment.
-    private static func readXMPRating(from data: Data) -> Int? {
+    private static func readJPEGXMPRating(from data: Data) -> Int? {
         guard let (_, xml) = findXMPSegment(in: data) else { return nil }
         guard let str = String(data: xml, encoding: .utf8) else { return nil }
-
-        // Simple regex: <xmp:Rating>N</xmp:Rating>
-        if let range = str.range(of: #"<xmp:Rating>(\d)</xmp:Rating>"#,
-                                options: .regularExpression) {
-            let match = str[range]
-            let numStr = match.filter { $0.isNumber }
-            return Int(numStr)
-        }
-        return nil
+        return extractRatingFromXML(str)
     }
 
-    // MARK: - XMP Write
-
     /// Add or update the XMP Rating in a JPEG's APP1 segment.
-    private static func writeXMPRating(to data: Data, rating: Int) throws -> Data {
+    private static func writeJPEGXMPRating(to data: Data, rating: Int) throws -> Data {
         if let (range, xml) = findXMPSegment(in: data) {
             // Update existing XMP
             let updated = updateRatingInXML(String(data: xml, encoding: .utf8) ?? "", rating: rating)
             guard let updatedData = updated.data(using: .utf8) else {
                 throw ExifError.xmpEncodingFailed
             }
-
-            // Rebuild the XMP segment
             let newSegment = buildXMPSegment(data: updatedData)
             var result = Data()
             result.append(data[0..<range.markerRange.lowerBound])
@@ -110,7 +150,227 @@ enum ExifService {
         return segment
     }
 
+    // MARK: - JPEG EXIF (fallback read)
+
+    /// Scan IFD0 for the EXIF Rating tag (0x4746). Read-only, no modification.
+    private static func readEXIFRating(from data: Data) -> Int {
+        guard let tiffData = extractTIFFData(from: data) else { return 0 }
+        guard tiffData.count >= 8 else { return 0 }
+
+        let littleEndian: Bool
+        switch (tiffData[0], tiffData[1]) {
+        case (0x49, 0x49): littleEndian = true   // "II"
+        case (0x4D, 0x4D): littleEndian = false   // "MM"
+        default: return 0
+        }
+
+        let ifd0Offset = Int(readU32(tiffData, at: 4, le: littleEndian))
+        guard ifd0Offset + 2 <= tiffData.count else { return 0 }
+
+        let entryCount = Int(readU16(tiffData, at: ifd0Offset, le: littleEndian))
+        for i in 0..<entryCount {
+            let entryOff = ifd0Offset + 2 + i * 12
+            guard entryOff + 12 <= tiffData.count else { break }
+            let tag = readU16(tiffData, at: entryOff, le: littleEndian)
+            if tag == exifRatingTag {
+                return Int(readU16(tiffData, at: entryOff + 8, le: littleEndian))
+            }
+        }
+        return 0
+    }
+
+    // MARK: - PNG XMP
+
+    /// Read `xmp:Rating` from a PNG iTXt chunk.
+    private static func readPNGRating(from data: Data) -> Int {
+        guard let (rating, _) = findPNGXMPChunk(in: data) else { return 0 }
+        return rating
+    }
+
+    /// Write or replace the XMP iTXt chunk in a PNG. Lossless — only adds or
+    /// replaces a single metadata chunk, pixel data is untouched.
+    private static func writePNGXMPRating(to data: Data, rating: Int) throws -> Data {
+        let xmpXML = createMinimalXMP(rating: rating)
+        let iTXtData = buildPNGiTXtData(keyword: pngXMPKeyword, text: xmpXML)
+        let iTXtChunk = buildPNGChunk(type: "iTXt", chunkData: iTXtData)
+
+        // Walk chunks to find IHDR end (insertion point) and existing XMP chunk.
+        var ihdrEnd: Int? = nil
+        var existingXMPRange: Range<Int>? = nil
+
+        var offset = 8  // skip 8-byte PNG signature
+        while offset + 8 <= data.count {
+            let chunkLen = Int(readU32(data, at: offset, le: false))
+            let typeStart = offset + 4
+            let typeStr = String(data: data.subdata(in: typeStart..<typeStart + 4), encoding: .ascii) ?? "????"
+            let dataStart = offset + 8
+            guard dataStart + chunkLen + 4 <= data.count else { break }
+
+            if typeStr == "IHDR" {
+                ihdrEnd = dataStart + chunkLen + 4  // after CRC
+            }
+
+            if typeStr == "iTXt" {
+                let chunkData = data.subdata(in: dataStart..<dataStart + chunkLen)
+                if let kwEnd = chunkData.firstIndex(of: 0) {
+                    let kw = String(data: chunkData.subdata(in: 0..<kwEnd), encoding: .ascii) ?? ""
+                    if kw == pngXMPKeyword {
+                        existingXMPRange = offset..<(dataStart + chunkLen + 4)
+                        break
+                    }
+                }
+            }
+
+            if typeStr == "IEND" { break }
+            offset = dataStart + chunkLen + 4
+        }
+
+        var result = Data()
+
+        if let xmpRange = existingXMPRange {
+            // Replace existing XMP chunk
+            result.append(data[0..<xmpRange.lowerBound])
+            result.append(iTXtChunk)
+            result.append(data[xmpRange.upperBound..<data.count])
+        } else if let insertAt = ihdrEnd {
+            // Insert new XMP chunk after IHDR
+            result.append(data[0..<insertAt])
+            result.append(iTXtChunk)
+            result.append(data[insertAt..<data.count])
+        } else {
+            throw ExifError.cannotReadFile
+        }
+
+        return result
+    }
+
+    /// Find the XMP iTXt chunk in a PNG; return (rating, fullChunkRange).
+    private static func findPNGXMPChunk(in data: Data) -> (Int, Range<Int>)? {
+        guard data.count > 8 else { return nil }
+        guard data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47 else { return nil }
+
+        var offset = 8
+        while offset + 8 <= data.count {
+            let chunkLen = Int(readU32(data, at: offset, le: false))
+            let typeStart = offset + 4
+            let typeStr = String(data: data.subdata(in: typeStart..<typeStart + 4), encoding: .ascii) ?? "????"
+            let dataStart = offset + 8
+            guard dataStart + chunkLen + 4 <= data.count else { return nil }
+
+            if typeStr == "iTXt" {
+                let chunkData = data.subdata(in: dataStart..<dataStart + chunkLen)
+                if let kwEnd = chunkData.firstIndex(of: 0) {
+                    let kw = String(data: chunkData.subdata(in: 0..<kwEnd), encoding: .ascii) ?? ""
+                    if kw == pngXMPKeyword {
+                        if let xml = parsePNGiTXtText(chunkData) {
+                            let rating = extractRatingFromXML(xml)
+                            return (rating, offset..<(dataStart + chunkLen + 4))
+                        }
+                    }
+                }
+            }
+
+            if typeStr == "IEND" { return nil }
+            offset = dataStart + chunkLen + 4
+        }
+        return nil
+    }
+
+    /// Extract the text field from an iTXt chunk (uncompressed only).
+    private static func parsePNGiTXtText(_ chunkData: Data) -> String? {
+        guard let kwEnd = chunkData.firstIndex(of: 0) else { return nil }
+        var pos = kwEnd + 1
+        guard pos + 2 <= chunkData.count else { return nil }
+        let compressionFlag = chunkData[pos]
+        pos += 2  // skip compression flag + method
+        guard compressionFlag == 0 else { return nil }  // only uncompressed
+
+        // Skip language tag (null-terminated)
+        while pos < chunkData.count && chunkData[pos] != 0 { pos += 1 }
+        pos += 1
+        // Skip translated keyword (null-terminated)
+        while pos < chunkData.count && chunkData[pos] != 0 { pos += 1 }
+        pos += 1
+
+        guard pos < chunkData.count else { return nil }
+        return String(data: chunkData.subdata(in: pos..<chunkData.count), encoding: .utf8)
+    }
+
+    /// Build the data portion of an iTXt chunk.
+    private static func buildPNGiTXtData(keyword: String, text: String) -> Data {
+        var d = Data()
+        d.append(keyword.data(using: .ascii)!)
+        d.append(0)                    // null terminator for keyword
+        d.append(0)                    // compression flag (0 = uncompressed)
+        d.append(0)                    // compression method
+        d.append(0)                    // empty language tag + null terminator
+        d.append(0)                    // empty translated keyword + null terminator
+        d.append(text.data(using: .utf8)!)
+        return d
+    }
+
+    /// Build a complete PNG chunk: length + type + data + CRC.
+    private static func buildPNGChunk(type: String, chunkData: Data) -> Data {
+        var chunk = Data()
+        // Length (4 bytes, big-endian)
+        let length = UInt32(chunkData.count)
+        chunk.append(UInt8(truncatingIfNeeded: length >> 24))
+        chunk.append(UInt8(truncatingIfNeeded: length >> 16))
+        chunk.append(UInt8(truncatingIfNeeded: length >> 8))
+        chunk.append(UInt8(truncatingIfNeeded: length))
+        // Type (4 bytes)
+        let typeData = type.data(using: .ascii)!
+        chunk.append(typeData)
+        // Data
+        chunk.append(chunkData)
+        // CRC over type + data
+        var crcInput = Data()
+        crcInput.append(typeData)
+        crcInput.append(chunkData)
+        let crc = crc32(crcInput)
+        chunk.append(UInt8(truncatingIfNeeded: crc >> 24))
+        chunk.append(UInt8(truncatingIfNeeded: crc >> 16))
+        chunk.append(UInt8(truncatingIfNeeded: crc >> 8))
+        chunk.append(UInt8(truncatingIfNeeded: crc))
+        return chunk
+    }
+
+    // MARK: - Sidecar XMP (HEIC, WebP, other)
+
+    /// Read rating from a `.xmp` sidecar next to the image.
+    private static func readSidecarRating(url: URL) -> Int {
+        let sidecar = sidecarURL(for: url)
+        guard let data = try? Data(contentsOf: sidecar),
+              let xml = String(data: data, encoding: .utf8) else { return 0 }
+        return extractRatingFromXML(xml)
+    }
+
+    /// Write rating to a `.xmp` sidecar. The original image file is untouched.
+    private static func writeSidecarXMPRating(url: URL, rating: Int) throws {
+        let sidecar = sidecarURL(for: url)
+        let xml = createMinimalXMP(rating: rating)
+        guard let xmlData = xml.data(using: .utf8) else {
+            throw ExifError.xmpEncodingFailed
+        }
+        try xmlData.write(to: sidecar, options: .atomic)
+    }
+
+    /// Path of the `.xmp` sidecar paired with `url` (whether or not it exists).
+    /// Public so file-management operations (copy, trash) can keep image and
+    /// sidecar together — HEIC/WebP ratings live there and would otherwise be
+    /// silently stranded.
+    static func sidecarURL(for url: URL) -> URL {
+        url.deletingPathExtension().appendingPathExtension("xmp")
+    }
+
     // MARK: - XMP XML helpers
+
+    /// Extract the rating value from XMP XML.
+    private static func extractRatingFromXML(_ xml: String) -> Int {
+        guard let range = xml.range(of: #"<xmp:Rating>(\d)</xmp:Rating>"#,
+                                    options: .regularExpression) else { return 0 }
+        return Int(xml[range].filter { $0.isNumber }) ?? 0
+    }
 
     private static func createMinimalXMP(rating: Int) -> String {
         """
@@ -141,35 +401,6 @@ enum ExifService {
 
         // No rdf:Description — fall back to creating fresh XMP
         return createMinimalXMP(rating: rating)
-    }
-
-    // MARK: - EXIF Binary Read (fallback)
-
-    /// Scan IFD0 for the EXIF Rating tag (0x4746). Read-only, no modification.
-    private static func readEXIFRating(from data: Data) -> Int {
-        guard let tiffData = extractTIFFData(from: data) else { return 0 }
-        guard tiffData.count >= 8 else { return 0 }
-
-        let littleEndian: Bool
-        switch (tiffData[0], tiffData[1]) {
-        case (0x49, 0x49): littleEndian = true   // "II"
-        case (0x4D, 0x4D): littleEndian = false   // "MM"
-        default: return 0
-        }
-
-        let ifd0Offset = Int(readU32(tiffData, at: 4, le: littleEndian))
-        guard ifd0Offset + 2 <= tiffData.count else { return 0 }
-
-        let entryCount = Int(readU16(tiffData, at: ifd0Offset, le: littleEndian))
-        for i in 0..<entryCount {
-            let entryOff = ifd0Offset + 2 + i * 12
-            guard entryOff + 12 <= tiffData.count else { break }
-            let tag = readU16(tiffData, at: entryOff, le: littleEndian)
-            if tag == exifRatingTag {
-                return Int(readU16(tiffData, at: entryOff + 8, le: littleEndian))
-            }
-        }
-        return 0
     }
 
     // MARK: - JPEG Segment Scanning
@@ -280,6 +511,29 @@ enum ExifService {
         return le
             ? (b0 | (b1 << 8) | (b2 << 16) | (b3 << 24))
             : ((b0 << 24) | (b1 << 16) | (b2 << 8) | b3)
+    }
+
+    // MARK: - CRC32 (for PNG chunks)
+
+    private static let crcTable: [UInt32] = {
+        var table = [UInt32](repeating: 0, count: 256)
+        for n in 0..<256 {
+            var c = UInt32(n)
+            for _ in 0..<8 {
+                c = (c & 1 != 0) ? (0xEDB88320 ^ (c >> 1)) : (c >> 1)
+            }
+            table[n] = c
+        }
+        return table
+    }()
+
+    private static func crc32(_ data: Data) -> UInt32 {
+        var crc: UInt32 = 0xFFFFFFFF
+        for byte in data {
+            let idx = Int((crc ^ UInt32(byte)) & 0xFF)
+            crc = crcTable[idx] ^ (crc >> 8)
+        }
+        return crc ^ 0xFFFFFFFF
     }
 }
 
