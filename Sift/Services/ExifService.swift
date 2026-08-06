@@ -61,6 +61,26 @@ enum ExifService {
 
     enum ImageFormat {
         case jpeg, png, heic, webp, other
+
+        /// Lowercase file extensions (no dot) associated with this format.
+        /// `.other` is unrecognized and carries no extensions.
+        var extensions: Set<String> {
+            switch self {
+            case .jpeg: return ["jpg", "jpeg"]
+            case .png:  return ["png"]
+            case .heic: return ["heic"]
+            case .webp: return ["webp"]
+            case .other: return []
+            }
+        }
+
+        /// Formats Sift can browse and rate. Excludes `.other`.
+        static let supported: [ImageFormat] = [.jpeg, .png, .heic, .webp]
+
+        /// Union of all supported extensions — the fast first-pass filter
+        /// before opening the file to check magic bytes.
+        static let supportedExtensions: Set<String> =
+            Set(supported.flatMap { $0.extensions })
     }
 
     /// Detect image format from the first bytes of the file.
@@ -95,6 +115,15 @@ enum ExifService {
         guard let handle = try? FileHandle(forReadingFrom: url) else { return nil }
         defer { try? handle.close() }
         return try? handle.read(upToCount: maxBytes)
+    }
+
+    /// True if the file's magic bytes match a supported format. Used as the
+    /// final gate by `FileService.scanImages` so renamed or corrupt files
+    /// (e.g. a `.tiff` renamed to `.jpg`) never reach the browser, even though
+    /// the extension whitelist already accepted them.
+    static func isSupportedFormat(url: URL) -> Bool {
+        guard let head = readHeader(url: url, maxBytes: 12) else { return false }
+        return ImageFormat.supported.contains(detectFormat(of: head))
     }
 
     // MARK: - JPEG XMP
