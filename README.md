@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-0.1.1-00B0FF?style=flat-square">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.1.2-00B0FF?style=flat-square">
   <img alt="License" src="https://img.shields.io/badge/license-GPLv3-4EC51F?style=flat-square">
   <img alt="Platform" src="https://img.shields.io/badge/platform-macOS%2014%2B-000000?style=flat-square">
   <img alt="Swift" src="https://img.shields.io/badge/Swift-5.0-FA7343?style=flat-square">
@@ -16,7 +16,7 @@
 
 <p align="center">
   <a href="https://github.com/yanjingtui/Sift/releases/latest">
-    <img src="https://img.shields.io/badge/Download-Sift%20v0.1.1-00B0FF?style=for-the-badge" alt="Download Sift">
+    <img src="https://img.shields.io/badge/Download-Sift%20v0.1.2-00B0FF?style=for-the-badge" alt="Download Sift">
   </a>
 </p>
 <p align="center"><sub>Universal DMG · Apple Silicon + Intel · macOS 14+<br>Open → drag to Applications → done</sub></p>
